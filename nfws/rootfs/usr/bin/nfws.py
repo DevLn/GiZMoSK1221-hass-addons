@@ -468,8 +468,11 @@ def hass_register_sensor(entity_name, sensor):
                 hass_conf["friendly_name"] = "Wind Angle"
             elif sensor_lower == "gustangle":
                 hass_conf["friendly_name"] = "Gust Angle"
-            
-    hass_conf["name"] = hass_conf["friendly_name"]
+                
+    if "friendly_name" in hass_conf:
+        hass_conf["name"] = hass_conf["friendly_name"]
+    else:
+        logger.debug( snow() + "Friendly name missing: " + str(hass_conf["name"]))
 
     logger.info( snow() + "Registering: " + str(hass_conf))
     ret = hass_mqtt_publish("homeassistant/sensor/nfws/" + entity_name + "/config", json.dumps(hass_conf), qos=0, retain=True) 
