@@ -470,9 +470,6 @@ def hass_register_sensor(entity_name, sensor):
             elif sensor_lower == "gustangle":
                 hass_conf["friendly_name"] = "Gust Angle"
             
-            hass_conf["Compass"] = degToCompass(hass_conf["value"])
-            hass_conf["CompassSymbol"] = degToCompassSymbol(hass_conf["value"])
-                
     hass_conf["name"] = hass_conf["friendly_name"]
 
     logger.info( snow() + "Registering: " + str(hass_conf))
