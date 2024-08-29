@@ -414,24 +414,67 @@ def hass_register_sensor(entity_name, sensor):
 					"model": "Weather Stations" 
 				}
                 
-    if sensor.lower() != "windanglecompass" and sensor.lower() != "windanglecompasssymbol" and sensor.lower() != "gustanglecompass" and sensor.lower() != "gustanglecompasssymbol":
+    sensor_lower = sensor.lower()
+    if "compass" in sensor_lower:
+        hass_conf["device_class"] = "enum"
+        hass_conf["icon"] = "mdi:compass-rose"
+        if sensor_lower[:4] == "wind":
+            hass_conf["friendly_name"] = "Wind Direction"
+        elif sensor_lower[:4] == "gust":
+            hass_conf["friendly_name"] = "Gust Direction"
+        if sensor_lower[-6:] == "symbol":
+            hass_conf["friendly_name"] += " (↕)"
+    else:
         hass_conf["state_class"] = "measurement"
-    if sensor.lower() == "temperature" or sensor.lower() == "min_temp" or sensor.lower() == "max_temp":
-        hass_conf["device_class"] = "temperature"
-        hass_conf["unit_of_measurement"] = "°C"
-    if sensor.lower() == "humidity":
-        hass_conf["device_class"] = "humidity"
-        hass_conf["unit_of_measurement"] = "%"
-    if sensor.lower() == "pressure":
-        hass_conf["device_class"] = "pressure"
-        hass_conf["unit_of_measurement"] = "hPa"
-    if sensor.lower() == "guststrength" or sensor.lower() == "windstrength":
-        hass_conf["unit_of_measurement"] = "km/h"
-    if sensor.lower() == "sum_rain_24" or sensor.lower() == "sum_rain_1" or sensor.lower() == "rain":
-        hass_conf["unit_of_measurement"] = "mm"
-#    if sensor.lower() == "windanglecompass" or sensor.lower() == "windanglecompasssymbol" or sensor.lower() == "gustanglecompass" or sensor.lower() == "gustanglecompasssymbol":
-#        hass_conf["state_class"] = ""
-    
+
+        if sensor_lower == "temperature" or sensor_lower == "min_temp" or sensor_lower == "max_temp":
+            hass_conf["device_class"] = "temperature"
+            hass_conf["unit_of_measurement"] = "°C"
+            hass_conf["friendly_name"] = "Temperature"
+            if sensor_lower == "min_temp":
+                hass_conf["friendly_name"] += " (Min)"
+            elif sensor_lower == "max_temp":
+                hass_conf["friendly_name"] += " (Max)"
+        elif sensor_lower == "humidity":
+            hass_conf["device_class"] = "humidity"
+            hass_conf["unit_of_measurement"] = "%"
+            hass_conf["friendly_name"] = "Humidity"
+        elif sensor_lower == "pressure":
+            hass_conf["device_class"] = "atmospheric_pressure"
+            hass_conf["unit_of_measurement"] = "hPa"
+            hass_conf["friendly_name"] = "Pressure"
+        elif sensor_lower == "guststrength" or sensor_lower == "windstrength":
+            hass_conf["device_class"] = "wind_speed"
+            hass_conf["unit_of_measurement"] = "km/h"
+            if sensor_lower == "windstrength":
+                #hass_conf["icon"] = "mdi:weather-windy"
+                hass_conf["friendly_name"] = "Wind Strength"
+            else:
+                hass_conf["icon"] = "mdi:weather-dust"
+                hass_conf["friendly_name"] = "Gust Strength"
+        elif "rain" in sensor_lower:
+            hass_conf["device_class"] = "precipitation" #"water"
+            hass_conf["state_class"] = "total_increasing"
+            hass_conf["unit_of_measurement"] = "mm"
+            hass_conf["friendly_name"] = "Rain"
+            if "sum_rain_1" in sensor_lower:
+                hass_conf["friendly_name"] += " (1h)"
+            elif "sum_rain_24" in sensor_lower:
+                hass_conf["friendly_name"] += " (24h)"
+        elif "angle" in sensor_lower:
+            hass_conf["device_class"] = "power_factor"
+            hass_conf["unit_of_measurement"] = "°"
+            #hass_conf["icon"] = "mdi:compass-rose"
+            if sensor_lower == "windangle":
+                hass_conf["friendly_name"] = "Wind Angle"
+            elif sensor_lower == "gustangle":
+                hass_conf["friendly_name"] = "Gust Angle"
+            
+            hass_conf["Compass"] = degToCompass(hass_conf["value"])
+            hass_conf["CompassSymbol"] = degToCompassSymbol(hass_conf["value"])
+                
+    hass_conf["name"] = hass_conf["friendly_name"]
+
     logger.info( snow() + "Registering: " + str(hass_conf))
     ret = hass_mqtt_publish("homeassistant/sensor/nfws/" + entity_name + "/config", json.dumps(hass_conf), qos=0, retain=True) 
     #print(ret.rc)
@@ -447,6 +490,11 @@ def hass_publish_station_sensor(station, sensor, value):
         hass_data = {}
         hass_data["value"] = value
         hass_data["updated_when"] = snow()
+        
+        if "angle" in sensor.lower():
+            hass_data["Compass"] = degToCompass(value)
+            hass_data["CompassSymbol"] = degToCompassSymbol(value)
+
         ret = hass_mqtt_publish(f"nfws/sensor/nfws_{station['name']}_{sensor}/state", json.dumps(hass_data, ensure_ascii=False), qos = 0, retain = False) 
         #print(ret.rc)
 
@@ -602,7 +650,24 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
         hass_sensor = f"nfws_{function_sensor['function']}_{sensor}{suffix}"
         hass_sensor_value = {}
         hass_sensor_value["value"] = value
+        
+        if "angle" in sensor.lower():
+            hass_sensor_value["Compass"] = degToCompass(value)
+            hass_sensor_value["CompassSymbol"] = degToCompassSymbol(value)
+
         hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+        
+        if "angle" in sensor.lower():
+            hass_sensor = f"nfws_{function_sensor['function']}_{sensor}Compass{suffix}"
+            hass_sensor_value = {}
+            hass_sensor_value["value"] = degToCompass(value)
+            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+
+            hass_sensor = f"nfws_{function_sensor['function']}_{sensor}CompassSymbol{suffix}"
+            hass_sensor_value = {}
+            hass_sensor_value["value"] = degToCompassSymbol(value)
+            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+
         #print(f"{hass_sensor}: {value}")
         
 
@@ -655,6 +720,11 @@ def netatmo_handle_calculated_sensors_function_first(function_sensor):
                     hass_sensor_value = {}
                     hass_sensor_value["value"] = f"{dashboard_data[sensor]}"
                     hass_sensor_value["station_name"] = station_name
+                    
+                    if "angle" in sensor.lower():
+                        hass_sensor_value["Compass"] = degToCompass(dashboard_data[sensor])
+                        hass_sensor_value["CompassSymbol"] = degToCompassSymbol(dashboard_data[sensor])
+
                     hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
                     #print(f"{hass_sensor}: {hass_sensor_value}")
             break
