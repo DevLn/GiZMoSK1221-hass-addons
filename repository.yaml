@@ -1,4 +1,4 @@
 # https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
-name: GiZMo's Home Assistant add-on repository
-url: 'https://github.com/GiZMoSK1221/hass-addons'
-maintainer: GiZMo <github(@at@)stefanka.com>
+name: DevLN fork of GiZMo's Home Assistant add-on repository
+url: 'https://github.com/DevLn/GiZMoSK1221-hass-addons'
+maintainer: DevLN & GiZMo <github(@at@)stefanka.com>
