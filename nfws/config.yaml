@@ -3,7 +3,7 @@ description: "your Netatmo Favorites Weather Stations and even more!"
 version: "0.9.7.1"
 slug: "nfws"
 init: false
-url: "https://github.com/GiZMoSK1221/hass-addons/nfws"
+url: "https://github.com/DevLn/GiZMoSK1221-hass-addons"
 homeassistant_api: true
 arch:
   - aarch64
@@ -34,4 +34,4 @@ schema:
     log_level: "list(debug|info|warning|error|critical)"
 services:
   - mqtt:need
-image: "ghcr.io/gizmosk1221/{arch}-addon-nfws"
+image: "ghcr.io/DevLn/{arch}-addon-nfws"
