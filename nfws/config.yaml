@@ -34,4 +34,4 @@ schema:
     log_level: "list(debug|info|warning|error|critical)"
 services:
   - mqtt:need
-image: "ghcr.io/DevLn/{arch}-addon-nfws"
+image: "ghcr.io/devln/{arch}-addon-nfws"
