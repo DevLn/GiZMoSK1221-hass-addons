@@ -647,13 +647,13 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
         hass_sensor_value = {}
         hass_sensor_value["value"] = value
         
-        if "angle" in sensor.lower():
+        if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_sensor_value["Compass"] = degToCompass(value)
             hass_sensor_value["CompassSymbol"] = degToCompassSymbol(value)
 
         hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
         
-        if "angle" in sensor.lower():
+        if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_sensor = f"nfws_{function_sensor['function']}_{sensor}Compass{suffix}"
             hass_sensor_value = {}
             hass_sensor_value["value"] = degToCompass(value)
@@ -717,7 +717,7 @@ def netatmo_handle_calculated_sensors_function_first(function_sensor):
                     hass_sensor_value["value"] = f"{dashboard_data[sensor]}"
                     hass_sensor_value["station_name"] = station_name
                     
-                    if "angle" in sensor.lower():
+                    if "angle" in sensor.lower() and "compass" not in sensor.lower():
                         hass_sensor_value["Compass"] = degToCompass(dashboard_data[sensor])
                         hass_sensor_value["CompassSymbol"] = degToCompassSymbol(dashboard_data[sensor])
 
