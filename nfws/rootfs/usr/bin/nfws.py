@@ -162,15 +162,14 @@ def load_netatmo_token():
 
 
 def degToCompass(num):
+    return degToCompassInternal(num, ["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
+def degToCompassSymbol(num):
+    return degToCompassInternal(num, ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"])
+def degToCompassInternal(num, arr):
 #https://stackoverflow.com/questions/7490660/converting-wind-direction-in-angles-to-text-words
     val = int((num/45)+.5)
-    arr = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
     return arr[(val % 8)]
-def degToCompassSymbol(num):
-    val = int((num/45)+.5)
-#    arr = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
-    arr = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"]
-    return arr[(val % 8)]
+
 
 def snow():
     #return datetime.now().strftime("%d.%m.%Y %H:%M:%S")+" "
@@ -488,7 +487,7 @@ def hass_publish_station_sensor(station, sensor, value):
         hass_data["value"] = value
         hass_data["updated_when"] = snow()
         
-        if "angle" in sensor.lower():
+        if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_data["Compass"] = degToCompass(value)
             hass_data["CompassSymbol"] = degToCompassSymbol(value)
 
