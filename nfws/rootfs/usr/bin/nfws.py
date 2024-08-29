@@ -162,15 +162,14 @@ def load_netatmo_token():
 
 
 def degToCompass(num):
-#https://stackoverflow.com/questions/7490660/converting-wind-direction-in-angles-to-text-words
-    val = int((num/45)+.5)
-    arr = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
-    return arr[(val % 8)]
+    return degToCompassInternal(num, ["N", "NE", "E", "SE", "S", "SW", "W", "NW"])
 def degToCompassSymbol(num):
-    val = int((num/45)+.5)
-#    arr = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
-    arr = ["↓", "↙", "←", "↖", "↑", "↗", "→", "↘"]
+    return degToCompassInternal(num, ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"])
+def degToCompassInternal(num, arr):
+#https://stackoverflow.com/questions/7490660/converting-wind-direction-in-angles-to-text-words
+    val = int((int(num)/45)+.5)
     return arr[(val % 8)]
+
 
 def snow():
     #return datetime.now().strftime("%d.%m.%Y %H:%M:%S")+" "
