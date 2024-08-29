@@ -414,7 +414,7 @@ def hass_register_sensor(entity_name, sensor, station):
 				# }
     # set different device for each station
     hass_conf["device"] = {
-				"identifiers": ["Netatmo weather station_70ee50"], 
+				"identifiers": ["nfws_" + station], 
 				"name": station, 
 				"manufacturer": "Netatmo", 
 				"model": "Weather Stations" 
