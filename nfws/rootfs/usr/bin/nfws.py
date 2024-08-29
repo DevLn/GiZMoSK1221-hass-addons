@@ -392,7 +392,7 @@ def hass_mqtt_publish(topic, value, qos, retain):
             
     return res
 
-def hass_register_sensor(entity_name, sensor):
+def hass_register_sensor(entity_name, sensor, station):
 #nfws_name_temperature, sensor name
     global registered_entity
     
@@ -406,12 +406,20 @@ def hass_register_sensor(entity_name, sensor):
     hass_conf["state_topic"] = "nfws/sensor/" + entity_name + "/state"
     hass_conf["json_attributes_topic"] = "nfws/sensor/" + entity_name + "/state" #new
     hass_conf["value_template"] = "{{ value_json.value }}" #new
+    # hass_conf["device"] = {
+				# 	"identifiers": ["Netatmo weather station_70ee50"], 
+				# 	"name": "Netatmo Favourite Weather Stations", 
+				# 	"manufacturer": "Netatmo", 
+				# 	"model": "Weather Stations" 
+				# }
+    # set different device for each station
     hass_conf["device"] = {
-					"identifiers": ["Netatmo weather station_70ee50"], 
-					"name": "Netatmo Favourite Weather Stations", 
-					"manufacturer": "Netatmo", 
-					"model": "Weather Stations" 
-				}
+				"identifiers": ["Netatmo weather station_70ee50"], 
+				"name": station, 
+				"manufacturer": "Netatmo", 
+				"model": "Weather Stations" 
+			}
+
                 
     sensor_lower = sensor.lower()
     if "compass" in sensor_lower:
@@ -492,7 +500,7 @@ def hass_publish_station_sensor(station, sensor, value):
 #station from config, sensor name, value
     
     if sensor in station["sensors"]:        #is sensor configured?
-        hass_register_sensor("nfws_" + station["name"] + "_" + sensor, sensor)
+        hass_register_sensor("nfws_" + station["name"] + "_" + sensor, sensor, station["name"])
 
         hass_data = {}
         hass_data["value"] = value
@@ -507,10 +515,10 @@ def hass_publish_station_sensor(station, sensor, value):
 
     return True
 
-def hass_publish_calculated_station_sensor(entity_name, sensor, value):
+def hass_publish_calculated_station_sensor(entity_name, sensor, value, station):
 #calculated station name, sensor name, value
     
-    hass_register_sensor(entity_name, sensor)
+    hass_register_sensor(entity_name, sensor, station)
     
     value["updated_when"] = snow()
     ret = hass_mqtt_publish(f"nfws/sensor/{entity_name}/state", json.dumps(value, ensure_ascii=False), qos = 0, retain = False) 
@@ -667,18 +675,18 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
             hass_sensor_value["Compass"] = degToCompass(value)
             hass_sensor_value["CompassSymbol"] = degToCompassSymbol(value)
 
-        hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+        hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
         
         if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_sensor = f"nfws_{function_sensor['function']}_{sensor}Compass{suffix}"
             hass_sensor_value = {}
             hass_sensor_value["value"] = degToCompass(value)
-            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
 
             hass_sensor = f"nfws_{function_sensor['function']}_{sensor}CompassSymbol{suffix}"
             hass_sensor_value = {}
             hass_sensor_value["value"] = degToCompassSymbol(value)
-            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+            hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
 
         #print(f"{hass_sensor}: {value}")
         
@@ -737,7 +745,7 @@ def netatmo_handle_calculated_sensors_function_first(function_sensor):
                         hass_sensor_value["Compass"] = degToCompass(dashboard_data[sensor])
                         hass_sensor_value["CompassSymbol"] = degToCompassSymbol(dashboard_data[sensor])
 
-                    hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value)
+                    hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
                     #print(f"{hass_sensor}: {hass_sensor_value}")
             break
         if found == True:
