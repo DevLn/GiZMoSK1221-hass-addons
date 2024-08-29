@@ -419,8 +419,11 @@ def hass_register_sensor(entity_name, sensor):
         hass_conf["icon"] = "mdi:compass-rose"
         if sensor_lower[:4] == "wind":
             hass_conf["friendly_name"] = "Wind Direction"
+        if sensor_lower[:8] == "max_wind":
+            hass_conf["friendly_name"] = "Wind (Max) Direction"
         elif sensor_lower[:4] == "gust":
             hass_conf["friendly_name"] = "Gust Direction"
+            
         if sensor_lower[-6:] == "symbol":
             hass_conf["friendly_name"] += " (↕)"
     else:
@@ -442,12 +445,15 @@ def hass_register_sensor(entity_name, sensor):
             hass_conf["device_class"] = "atmospheric_pressure"
             hass_conf["unit_of_measurement"] = "hPa"
             hass_conf["friendly_name"] = "Pressure"
-        elif sensor_lower == "guststrength" or sensor_lower == "windstrength":
+        elif sensor_lower == "guststrength" or sensor_lower == "windstrength" or sensor_lower == "max_wind_str":
             hass_conf["device_class"] = "wind_speed"
             hass_conf["unit_of_measurement"] = "km/h"
             if sensor_lower == "windstrength":
                 #hass_conf["icon"] = "mdi:weather-windy"
                 hass_conf["friendly_name"] = "Wind Strength"
+            elif sensor_lower == "max_wind_str":
+                #hass_conf["icon"] = "mdi:weather-windy"
+                hass_conf["friendly_name"] = "Wind (Max) Strength"
             else:
                 hass_conf["icon"] = "mdi:weather-dust"
                 hass_conf["friendly_name"] = "Gust Strength"
@@ -466,6 +472,8 @@ def hass_register_sensor(entity_name, sensor):
             #hass_conf["icon"] = "mdi:compass-rose"
             if sensor_lower == "windangle":
                 hass_conf["friendly_name"] = "Wind Angle"
+            elif sensor_lower == "max_wind_angle":
+                hass_conf["friendly_name"] = "Wind (Max) Angle"
             elif sensor_lower == "gustangle":
                 hass_conf["friendly_name"] = "Gust Angle"
                 
@@ -595,6 +603,11 @@ def netatmo_handle_favourite_stations_sensors():
                     hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngle", module["dashboard_data"]["WindAngle"])
                     hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngleCompass", degToCompass(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
                     hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
+                    #print(module["dashboard_data"]["WindAngle"])
+                if "max_wind_angle" in module["dashboard_data"]:
+                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angle", module["dashboard_data"]["max_wind_angle"])
+                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angleCompass", degToCompass(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
+                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
                     #print(module["dashboard_data"]["WindAngle"])
                 if "GustStrength" in module["dashboard_data"]:
                     hass_publish_station_sensor(netatmo_stations[device["_id"]], "GustStrength", module["dashboard_data"]["GustStrength"])
