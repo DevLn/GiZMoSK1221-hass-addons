@@ -7,3 +7,6 @@
 - added min_temp, max_temp netatmo temperature sensor
 - added option netatmo/show_response
 	for debug purposes use "true"
+
+## 0.9.7.*
+- WIP

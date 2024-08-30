@@ -48,7 +48,7 @@ Now, you were able tu run successfully the addon for the first time. Now, go to 
 
 ## Configuring add-on
 ### stations.yaml
-[stations.yaml example](https://github.com/GiZMoSK1221/hass-addons/blob/main/nfws/help/stations_example.yaml) with parameters description
+[stations.yaml example](https://github.com/DevLn/GiZMoSK1221-hass-addons/blob/main/nfws/help/stations_example.yaml) with parameters description
 
 ### Addon configuration tab
 - netatmo->refresh_interval: how often in minutes should addon retrieve data
