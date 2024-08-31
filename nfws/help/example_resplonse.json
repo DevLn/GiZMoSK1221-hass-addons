@@ -1,0 +1,372 @@
+{
+  "body": {
+    "devices": [
+      {
+        "_id": "70:ee:50:13:2b:04",
+        "station_name": "Vitosha",
+        "type": "NAMain",
+        "last_status_store": 1725036244,
+        "reachable": true,
+        "favorite": true,
+        "data_type": [ "Pressure" ],
+        "place": {
+          "altitude": 673,
+          "city": "Vitosha",
+          "street": "Dobrovolets",
+          "country": "BG",
+          "timezone": "Europe\/Sofia",
+          "location": [ 23.240741, 42.663074 ]
+        },
+        "read_only": true,
+        "dashboard_data": {
+          "time_utc": 1725036229,
+          "Pressure": 1036.2,
+          "AbsolutePressure": 956.2,
+          "pressure_trend": "stable"
+        },
+        "modules": [
+          {
+            "_id": "02:00:00:28:de:38",
+            "type": "NAModule1",
+            "data_type": [ "Temperature", "Humidity" ],
+            "reachable": true,
+            "last_message": 1725036242,
+            "last_seen": 1725036204,
+            "dashboard_data": {
+              "time_utc": 1725036204,
+              "Temperature": 19.2,
+              "Humidity": 83,
+              "min_temp": 16.7,
+              "max_temp": 24.6,
+              "date_max_temp": 1725018209,
+              "date_min_temp": 1724982937,
+              "temp_trend": "down"
+            }
+          },
+          {
+            "_id": "05:00:00:04:12:f8",
+            "type": "NAModule3",
+            "data_type": [ "Rain" ],
+            "reachable": true,
+            "last_message": 1725036242,
+            "last_seen": 1725036236,
+            "dashboard_data": {
+              "time_utc": 1725036223,
+              "Rain": 0,
+              "sum_rain_1": 0,
+              "sum_rain_24": 3.9
+            }
+          },
+          {
+            "_id": "06:00:00:01:a7:58",
+            "type": "NAModule2",
+            "data_type": [ "Wind" ],
+            "reachable": true,
+            "last_message": 1725036242,
+            "last_seen": 1725036242,
+            "dashboard_data": {
+              "time_utc": 1725036223,
+              "WindStrength": 2,
+              "WindAngle": 40,
+              "GustStrength": 4,
+              "GustAngle": 65,
+              "max_wind_str": 18,
+              "max_wind_angle": 39,
+              "date_max_wind_str": 1725019760,
+              "WindHistoric": [
+                {
+                  "time_utc": 1725036223,
+                  "WindStrength": 2,
+                  "WindAngle": 40
+                },
+                {
+                  "time_utc": 1725035922,
+                  "WindStrength": 3,
+                  "WindAngle": 59
+                },
+                {
+                  "time_utc": 1725035621,
+                  "WindStrength": 3,
+                  "WindAngle": 90
+                },
+                {
+                  "time_utc": 1725035319,
+                  "WindStrength": 3,
+                  "WindAngle": 90
+                },
+                {
+                  "time_utc": 1725035013,
+                  "WindStrength": 3,
+                  "WindAngle": 73
+                },
+                {
+                  "time_utc": 1725034712,
+                  "WindStrength": 3,
+                  "WindAngle": 78
+                },
+                {
+                  "time_utc": 1725034410,
+                  "WindStrength": 3,
+                  "WindAngle": 74
+                },
+                {
+                  "time_utc": 1725034109,
+                  "WindStrength": 3,
+                  "WindAngle": 67
+                },
+                {
+                  "time_utc": 1725033808,
+                  "WindStrength": 4,
+                  "WindAngle": 101
+                },
+                {
+                  "time_utc": 1725033507,
+                  "WindStrength": 3,
+                  "WindAngle": 73
+                },
+                {
+                  "time_utc": 1725033199,
+                  "WindStrength": 2,
+                  "WindAngle": 90
+                },
+                {
+                  "time_utc": 1725032898,
+                  "WindStrength": 2,
+                  "WindAngle": 64
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "_id": "70:ee:50:27:5e:34",
+        "station_name": "Vitosha",
+        "type": "NAMain",
+        "last_status_store": 1725036193,
+        "reachable": true,
+        "favorite": true,
+        "data_type": [ "Pressure" ],
+        "place": {
+          "altitude": 652,
+          "city": "Vitosha",
+          "street": "Erovete",
+          "country": "BG",
+          "timezone": "Europe\/Sofia",
+          "location": [ 23.259502, 42.661097 ]
+        },
+        "read_only": true,
+        "dashboard_data": {
+          "time_utc": 1725036192,
+          "Pressure": 1018.3,
+          "AbsolutePressure": 942,
+          "pressure_trend": "stable"
+        },
+        "modules": [
+          {
+            "_id": "02:00:00:27:44:8e",
+            "type": "NAModule1",
+            "data_type": [ "Temperature", "Humidity" ],
+            "reachable": true,
+            "last_message": 1725036187,
+            "last_seen": 1725036187,
+            "dashboard_data": {
+              "time_utc": 1725036187,
+              "Temperature": 20.4,
+              "Humidity": 75,
+              "min_temp": 18,
+              "max_temp": 25.3,
+              "date_max_temp": 1725017884,
+              "date_min_temp": 1724985481,
+              "temp_trend": "down"
+            }
+          },
+          {
+            "_id": "06:00:00:03:da:1c",
+            "type": "NAModule2",
+            "data_type": [ "Wind" ],
+            "reachable": false,
+            "last_message": 1690484514,
+            "last_seen": 1690484514
+          },
+          {
+            "_id": "05:00:00:05:c9:6a",
+            "type": "NAModule3",
+            "data_type": [ "Rain" ],
+            "reachable": true,
+            "last_message": 1725036187,
+            "last_seen": 1725036181,
+            "dashboard_data": {
+              "time_utc": 1725036181,
+              "Rain": 0,
+              "sum_rain_1": 0,
+              "sum_rain_24": 0.1
+            }
+          }
+        ]
+      },
+      {
+        "_id": "70:ee:50:02:2a:00",
+        "station_name": "Sofia",
+        "type": "NAMain",
+        "last_status_store": 1725036099,
+        "reachable": true,
+        "favorite": true,
+        "data_type": [ "Pressure" ],
+        "place": {
+          "altitude": 626,
+          "city": "Sofia",
+          "street": "Budilnik",
+          "country": "BG",
+          "timezone": "Europe\/Sofia",
+          "location": [ 23.262872, 42.663467 ]
+        },
+        "read_only": true,
+        "dashboard_data": {
+          "time_utc": 1725036080,
+          "Pressure": 1020.7,
+          "AbsolutePressure": 947.2,
+          "pressure_trend": "stable"
+        },
+        "modules": [
+          {
+            "_id": "02:00:00:02:29:2c",
+            "type": "NAModule1",
+            "data_type": [ "Temperature", "Humidity" ],
+            "reachable": true,
+            "last_message": 1725036098,
+            "last_seen": 1725036079,
+            "dashboard_data": {
+              "time_utc": 1725036079,
+              "Temperature": 21.1,
+              "Humidity": 79,
+              "min_temp": 18.4,
+              "max_temp": 24.8,
+              "date_max_temp": 1725019468,
+              "date_min_temp": 1724981429,
+              "temp_trend": "down"
+            }
+          }
+        ]
+      },
+      {
+        "_id": "70:ee:50:2b:1a:86",
+        "station_name": "Sofia",
+        "type": "NAMain",
+        "last_status_store": 1725036011,
+        "reachable": true,
+        "favorite": true,
+        "data_type": [ "Pressure" ],
+        "place": {
+          "altitude": 670,
+          "city": "Sofia",
+          "street": "Kapka",
+          "country": "BG",
+          "timezone": "Europe\/Sofia",
+          "location": [ 23.2404819, 42.662529 ]
+        },
+        "read_only": true,
+        "dashboard_data": {
+          "time_utc": 1725036010,
+          "Pressure": 1022.5,
+          "AbsolutePressure": 943.9,
+          "pressure_trend": "stable"
+        },
+        "modules": [
+          {
+            "_id": "05:00:00:03:8d:6a",
+            "type": "NAModule3",
+            "data_type": [ "Rain" ],
+            "reachable": true,
+            "last_message": 1725036009,
+            "last_seen": 1725036009,
+            "dashboard_data": {
+              "time_utc": 1725036009,
+              "Rain": 0,
+              "sum_rain_1": 0,
+              "sum_rain_24": 2.9
+            }
+          },
+          {
+            "_id": "02:00:00:2a:fd:82",
+            "type": "NAModule1",
+            "data_type": [ "Temperature", "Humidity" ],
+            "reachable": true,
+            "last_message": 1725036009,
+            "last_seen": 1725035996,
+            "dashboard_data": {
+              "time_utc": 1725035996,
+              "Temperature": 20.7,
+              "Humidity": 72,
+              "min_temp": 17.5,
+              "max_temp": 24.6,
+              "date_max_temp": 1725019180,
+              "date_min_temp": 1724982779,
+              "temp_trend": "down"
+            }
+          }
+        ]
+      },
+      {
+        "_id": "70:ee:50:74:26:12",
+        "station_name": "Sofia",
+        "type": "NAMain",
+        "last_status_store": 1725036471,
+        "reachable": true,
+        "favorite": true,
+        "data_type": [ "Pressure" ],
+        "place": {
+          "altitude": 623,
+          "city": "Sofia",
+          "street": "Despot Slav",
+          "country": "BG",
+          "timezone": "Europe\/Sofia",
+          "location": [ 23.263569, 42.6647 ]
+        },
+        "read_only": true,
+        "dashboard_data": {
+          "time_utc": 1725036469,
+          "Pressure": 1016,
+          "AbsolutePressure": 943.2,
+          "pressure_trend": "stable"
+        },
+        "modules": [
+          {
+            "_id": "02:00:00:73:f9:32",
+            "type": "NAModule1",
+            "data_type": [ "Temperature", "Humidity" ],
+            "reachable": true,
+            "last_message": 1725036466,
+            "last_seen": 1725036434,
+            "dashboard_data": {
+              "time_utc": 1725036434,
+              "Temperature": 20.1,
+              "Humidity": 78,
+              "min_temp": 17.9,
+              "max_temp": 25.3,
+              "date_max_temp": 1725014388,
+              "date_min_temp": 1724980909,
+              "temp_trend": "down"
+            }
+          }
+        ]
+      }
+    ],
+    "user": {
+      "mail": "loven2000@gmail.com",
+      "administrative": {
+        "lang": "en-US",
+        "reg_locale": "en-US",
+        "country": "BG",
+        "unit": 0,
+        "windunit": 0,
+        "pressureunit": 0,
+        "feel_like_algo": 0
+      },
+      "app_telemetry": false
+    }
+  },
+  "status": "ok",
+  "time_exec": 0.1840829849243164,
+  "time_server": 1725036508
+}
