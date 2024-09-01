@@ -69,7 +69,7 @@ def load_config():
             logger.critical(f"{snow()}options.yaml missing {err=}, {type(err)=}")
             exit()
     
-    #logger.critical(config)
+    logger.debug(config)
     #exit()
 
     try:
@@ -109,6 +109,8 @@ def load_config():
         (config["netatmo"])["redirect_uri"] = "hassio"
     if "state" not in config["netatmo"]:
         (config["netatmo"])["state"] = "nfws_hass"
+
+    logger.debug(config)
 
     netatmo_stations = config["netatmo_stations"]
     params = {

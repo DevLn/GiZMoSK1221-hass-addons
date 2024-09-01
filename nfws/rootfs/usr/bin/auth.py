@@ -31,6 +31,8 @@ def netatmo_check_oauth_code():
     If missing, display a critical error message with instructions on how to obtain the code.
     """
     global config
+    
+    logger.debug(config)
 
     client = get_dict_value(config["netatmo"], "oauth_code", "")
     if client == "":
