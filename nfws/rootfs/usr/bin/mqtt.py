@@ -1,5 +1,5 @@
 from util import *
-from config import *
+from conf import *
 import paho.mqtt.client as paho
 import time
 import requests

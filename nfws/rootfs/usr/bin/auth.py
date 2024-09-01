@@ -1,4 +1,4 @@
-from config import *
+from conf import *
 import requests
 import time
 import webbrowser
@@ -30,6 +30,8 @@ def netatmo_check_oauth_code():
     Check if the Netatmo authorization OAUTH code is missing.
     If missing, display a critical error message with instructions on how to obtain the code.
     """
+    global config
+
     client = get_dict_value(config["netatmo"], "oauth_code", "")
     if client == "":
         logger.critical(f"{snow()}Missing Netatmo authorisation OAUTH code!")

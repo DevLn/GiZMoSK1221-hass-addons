@@ -1,5 +1,5 @@
 import time
-from config import *
+from conf import *
 from util import *
 from auth import *
 from mqtt import *
