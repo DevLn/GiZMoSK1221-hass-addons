@@ -1,20 +1,18 @@
+import global_vars as g
 from util import *
-from conf import *
 import paho.mqtt.client as paho
 import time
 import requests
 
-global mqtt_client
+mqtt_client = None
 
 def mqtt_on_connect(client, userdata, flags, rc):
     """
     Callback function for MQTT client on connect event.
     """
-    global registered_entity
-
     if rc == 0: 
         debug_log("Connected to mqtt broker - mqtt_on_connect")
-        registered_entity = {}
+        g.registered_entity = {}
     else:
         debug_log("Connection to mqtt broker failed - mqtt_on_connect")
         logger.warning("  Retry in 10 sec again")
@@ -26,7 +24,7 @@ def mqtt_disconnect():
     """
     Disconnects the MQTT client.
     """
-    if run_mode != "hass":
+    if g.run_mode != "hass":
         mqtt_client.disconnect()
     return True
         
@@ -34,19 +32,19 @@ def mqtt_connect():
     """
     Connects the MQTT client.
     """
-    if run_mode == "hass":
+    if g.run_mode == "hass":
         return True
 
     global mqtt_client
     response_ok = False
     while not response_ok:
         try:
-            client = get_dict_value(config["mqtt"], "client", "nwsclient")
+            client = get_dict_value(g.config["mqtt"], "client", "nwsclient")
             mqtt_client = paho.Client(client)
-            if get_dict_value(config["mqtt"], "username", "") != "":
-                mqtt_client.username_pw_set(config["mqtt"]["username"], config["mqtt"]["password"])
+            if get_dict_value(g.config["mqtt"], "username", "") != "":
+                mqtt_client.username_pw_set(g.config["mqtt"]["username"], g.config["mqtt"]["password"])
             mqtt_client.on_connect = mqtt_on_connect
-            res = mqtt_client.connect(config["mqtt"]["address"], config["mqtt"]["port"])
+            res = mqtt_client.connect(g.config["mqtt"]["address"], g.config["mqtt"]["port"])
             mqtt_client.loop_start()
             if res != 0:
                 logger.error(snow()+ "Cannot connect to mqtt broker: " + str(res))
@@ -55,7 +53,7 @@ def mqtt_connect():
             else:
                 debug_log("Connected to mqtt broker")
                 response_ok = True
-                registered_entity = {}
+                g.registered_entity = {}
         except BaseException as err:
             logger.error(f"{snow()}Unexpected mqtt_connect {err=}, {type(err)=}")
             logger.error("  Retry in 1 min again")
@@ -73,7 +71,7 @@ def hass_mqtt_publish(topic, value, qos, retain):
 
     response_ok = False
     while not response_ok:
-        if run_mode == "hass":
+        if g.run_mode == "hass":
             try:
                 res = requests.request('POST', 'http://supervisor/core/api/services/mqtt/publish', headers=headers, json=data)
                 if res.status_code != 200:
@@ -110,15 +108,15 @@ def hass_mqtt_delete_retain_messages():
     """
     def on_message(client, userdata, msg):
         if msg.retain == 1:
-            if get_dict_value(config["nfws"], "log_level") == "debug":
+            if get_dict_value(g.config["nfws"], "log_level") == "debug":
                 logger.info(f"Deleting retain topic {msg.topic}")
             hass_mqtt_publish(msg.topic, "", 0, True)
 #            hass_mqtt_publish("homeassistant/sensor/nfws/test", "", 0, True)
     global mqtt_client
 
-    if run_mode == "hass":
+    if g.run_mode == "hass":
         return
-    if get_dict_value(config["nfws"], "deleteRetain", False) != True:
+    if get_dict_value(g.config["nfws"], "deleteRetain", False) != True:
         return
     logger.info(snow() + "Deleting retain config messages")
     mqtt_client.subscribe("homeassistant/sensor/nfws/#")

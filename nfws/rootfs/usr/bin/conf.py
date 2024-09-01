@@ -1,18 +1,15 @@
+import global_vars as g
 import json
 import os
 import shutil
 import yaml
 from util import *
 
-config = {}
-config_dir = ""
-run_mode = ""  #local, hass
-
 def prepare_hass_addon():
     """
     Prepare the Home Assistant add-on by creating necessary directories and copying files.
     """
-    if run_mode != "hass":
+    if g.run_mode != "hass":
         return False
 
     try:
@@ -39,87 +36,78 @@ def load_config():
     """
     Load the configuration settings from options.json or options.yaml file.
     """
-    global config
-    global netatmo_stations
     global params
-    global config_dir
-    global run_mode
     global logger
 
     if "SUPERVISOR_TOKEN" in os.environ:
-        config_dir = "/config/nfws/"
-        run_mode = "hass"
+        g.config_dir = "/config/nfws/"
+        g.run_mode = "hass"
     else:
-        run_mode = "local"
+        g.run_mode = "local"
 
     prepare_hass_addon()
 
-    if run_mode == "hass":
+    if g.run_mode == "hass":
         try:
             with open('/data/options.json', 'r') as file:
-                config = json.load(file)
+                g.config = json.load(file)
         except BaseException as err:
             logger.critical(f"{snow()}/data/options.json missing {err=}, {type(err)=}")
             exit()
     else:
         try:
             with open(r'options.yaml') as file:
-                config = yaml.load(file, Loader=yaml.FullLoader)
+                g.config = yaml.load(file, Loader=yaml.FullLoader)
         except BaseException as err:
             logger.critical(f"{snow()}options.yaml missing {err=}, {type(err)=}")
             exit()
     
-    logger.debug('config loaded:')
-    logger.debug(config)
     #exit()
 
     try:
-        with open(config_dir+r'stations.yaml') as file:
+        with open(g.config_dir+r'stations.yaml') as file:
             config_stations = yaml.load(file, Loader=yaml.FullLoader)
     except BaseException as err:
-        logger.critical(f"{snow()}{config_dir}stations.yaml missing {err=}, {type(err)=}")
+        logger.critical(f"{snow()}{g.config_dir}stations.yaml missing {err=}, {type(err)=}")
         exit()
-    config.update(config_stations)
+    g.config.update(config_stations)
 
-    if get_dict_value(config["nfws"], "log_level") != "None":
-        logger.setLevel(get_dict_value(config["nfws"], "log_level").upper())
+    if get_dict_value(g.config["nfws"], "log_level") != "None":
+        logger.setLevel(get_dict_value(g.config["nfws"], "log_level").upper())
 
-    logger.debug(f"Run mode: {run_mode}")
-    logger.debug(f"Config dir: {config_dir}")
+    logger.debug(f"Run mode: {g.run_mode}")
+    logger.debug(f"Config dir: {g.config_dir}")
     
-    if "nfws" not in config:
-        config["nfws"] = "None"
-    if "netatmo" not in config:
+    if "nfws" not in g.config:
+        g.config["nfws"] = "None"
+    if "netatmo" not in g.config:
         logger.critical("netatmo section in config missing")
         exit()
-    if run_mode != "hass" and "mqtt" not in config:
+    if g.run_mode != "hass" and "mqtt" not in g.config:
         logger.critical("mqtt section in config missing")
         exit()
-    if "netatmo_stations" not in config:
+    if "netatmo_stations" not in g.config:
         logger.critical("netatmo_stations section in stations.yaml missing")
         exit()
     
-    if config["netatmo"]["client_id"] == "":
+    if g.config["netatmo"]["client_id"] == "":
         logger.critical("Netatmo client_id is empty!")
         exit()
-    if config["netatmo"]["client_secret"] == "":
+    if g.config["netatmo"]["client_secret"] == "":
         logger.critical("Netatmo client_secret is empty!")
         exit()
     
-    if "redirect_uri" not in config["netatmo"]:
-        (config["netatmo"])["redirect_uri"] = "hassio"
-    if "state" not in config["netatmo"]:
-        (config["netatmo"])["state"] = "nfws_hass"
+    if "redirect_uri" not in g.config["netatmo"]:
+        (g.config["netatmo"])["redirect_uri"] = "hassio"
+    if "state" not in g.config["netatmo"]:
+        (g.config["netatmo"])["state"] = "nfws_hass"
 
-    logger.debug('config updated:')
-    logger.debug(config)
-
-    netatmo_stations = config["netatmo_stations"]
-    params = {
+    g.netatmo_stations = g.config["netatmo_stations"]
+    g.params = {
         'device_id': '00:00:00:00:00:00',
         'get_favorites': 'true',
     }
-    params["device_id"] = next(iter(netatmo_stations))  #get first station from list
+    g.params["device_id"] = next(iter(g.netatmo_stations))  #get first station from list
     #print(next(iter(netatmo_stations)))
 
     return True

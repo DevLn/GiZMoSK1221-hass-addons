@@ -1,5 +1,5 @@
+import global_vars as g
 import re
-from conf import *
 from log import *
 from datetime import datetime, timezone
 
@@ -43,7 +43,7 @@ def debug_log(text):
     Args:
         text: The text to log.
     """
-    if get_dict_value(config["nfws"], "log_level") == "debug":
+    if get_dict_value(g.config["nfws"], "log_level") == "debug":
         logger.debug(snow() + text)
 
 def snow():

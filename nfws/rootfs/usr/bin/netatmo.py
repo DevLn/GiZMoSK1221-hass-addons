@@ -1,10 +1,9 @@
+import global_vars as g
 from jsonpath_ng.ext import parse
 from util import *
 from auth import *
 from mqtt import *
 
-#---global variables
-registered_entity = {}
 netatmo_not_used_stations = []
 
 json_netatmo = None
@@ -23,12 +22,11 @@ def hass_register_sensor(entity_name, sensor, station):
     Returns:
         bool: True if the sensor is successfully registered, False otherwise.
     """
-    global registered_entity
 
-    if entity_name in registered_entity:
+    if entity_name in g.registered_entity:
         return False
 
-    registered_entity[entity_name] = True
+    g.registered_entity[entity_name] = True
     hass_conf = {}
     hass_conf["unique_id"] = entity_name
     hass_conf["name"] = entity_name
@@ -183,7 +181,7 @@ def netatmo_getdata():
     """
     response_ok = False;
     while not response_ok:
-        access_token = netatmo_token["access_token"]
+        access_token = g.netatmo_token["access_token"]
         headers = {'Authorization': f"Bearer {access_token}", }
         try:
             response = requests.get('https://api.netatmo.com/api/getstationsdata', params=params, headers=headers)
@@ -217,7 +215,7 @@ def netatmo_handle_favourite_stations_sensors():
     Handle the favorite stations and their sensors from Netatmo API response.
     """
     for device in json_netatmo_devices:
-        if device["_id"] not in netatmo_stations:
+        if device["_id"] not in g.netatmo_stations:
             if device["_id"] not in netatmo_not_used_stations:
                 logger.info(f"Not used station id: {device['_id']}, name: {device['station_name']}")
                 netatmo_not_used_stations.append(device["_id"])
@@ -228,7 +226,7 @@ def netatmo_handle_favourite_stations_sensors():
         #print(device["station_name"])
         #print(netatmo_stations[device["_id"]])
 
-        hass_publish_station_sensor(netatmo_stations[device["_id"]], "Pressure", device["dashboard_data"]["Pressure"])
+        hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "Pressure", device["dashboard_data"]["Pressure"])
         #print(device["dashboard_data"]["Pressure"])
         for module in device["modules"]:
             #print(module["data_type"])
@@ -241,46 +239,46 @@ def netatmo_handle_favourite_stations_sensors():
 
             if module["data_type"].count("Temperature")!=0:
                 if "Temperature" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "Temperature", module["dashboard_data"]["Temperature"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "Temperature", module["dashboard_data"]["Temperature"])
                 if "min_temp" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "min_temp", module["dashboard_data"]["min_temp"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "min_temp", module["dashboard_data"]["min_temp"])
                 if "max_temp" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_temp", module["dashboard_data"]["max_temp"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "max_temp", module["dashboard_data"]["max_temp"])
             if module["data_type"].count("Humidity")!=0:
                 if "Humidity" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "Humidity", module["dashboard_data"]["Humidity"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "Humidity", module["dashboard_data"]["Humidity"])
                     #print(module["dashboard_data"]["Humidity"])
             if module["data_type"].count("Rain")!=0:
                 if "Rain" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "rain", module["dashboard_data"]["Rain"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "rain", module["dashboard_data"]["Rain"])
                     #print(module["dashboard_data"]["Rain"])
                 if "sum_rain_1" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "sum_rain_1", module["dashboard_data"]["sum_rain_1"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "sum_rain_1", module["dashboard_data"]["sum_rain_1"])
                     #print(module["dashboard_data"]["sum_rain_1"])
                 if "sum_rain_24" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "sum_rain_24", module["dashboard_data"]["sum_rain_24"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "sum_rain_24", module["dashboard_data"]["sum_rain_24"])
                     #print(module["dashboard_data"]["sum_rain_24"])
             if module["data_type"].count("Wind")!=0:
                 if "WindStrength" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindStrength", module["dashboard_data"]["WindStrength"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "WindStrength", module["dashboard_data"]["WindStrength"])
                     #print(module["dashboard_data"]["WindStrength"])
                 if "WindAngle" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngle", module["dashboard_data"]["WindAngle"])
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngleCompass", degToCompass(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "WindAngleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "WindAngle", module["dashboard_data"]["WindAngle"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "WindAngleCompass", degToCompass(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "WindAngleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["WindAngle"]))  ##odkial fuka
                     #print(module["dashboard_data"]["WindAngle"])
                 if "max_wind_angle" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angle", module["dashboard_data"]["max_wind_angle"])
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angleCompass", degToCompass(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "max_wind_angleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "max_wind_angle", module["dashboard_data"]["max_wind_angle"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "max_wind_angleCompass", degToCompass(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "max_wind_angleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["max_wind_angle"]))  ##odkial fuka
                     #print(module["dashboard_data"]["WindAngle"])
                 if "GustStrength" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "GustStrength", module["dashboard_data"]["GustStrength"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "GustStrength", module["dashboard_data"]["GustStrength"])
                     #print(module["dashboard_data"]["GustStrength"])
                 if "GustAngle" in module["dashboard_data"]:
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "GustAngle", module["dashboard_data"]["GustAngle"])
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "GustAngleCompass", degToCompass(module["dashboard_data"]["GustAngle"]))
-                    hass_publish_station_sensor(netatmo_stations[device["_id"]], "GustAngleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["GustAngle"]))
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "GustAngle", module["dashboard_data"]["GustAngle"])
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "GustAngleCompass", degToCompass(module["dashboard_data"]["GustAngle"]))
+                    hass_publish_station_sensor(g.netatmo_stations[device["_id"]], "GustAngleCompassSymbol", degToCompassSymbol(module["dashboard_data"]["GustAngle"]))
                     #print(module["dashboard_data"]["GustAngle"])
 
 def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
@@ -423,10 +421,10 @@ def netatmo_handle_calculated_sensors():
     """
     Handle the calculated sensors based on the configuration.
     """
-    if "calculated_sensors" not in config:
+    if "calculated_sensors" not in g.config:
         return
 
-    for function_sensor in config["calculated_sensors"]:
+    for function_sensor in g.config["calculated_sensors"]:
         if function_sensor["function"] == "first":
             netatmo_handle_calculated_sensors_function_first(function_sensor)
         if function_sensor["function"] in {"min", "max", "avg"}:
