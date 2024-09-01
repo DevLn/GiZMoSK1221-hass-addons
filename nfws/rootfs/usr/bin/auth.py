@@ -2,6 +2,8 @@ import global_vars as g
 from log import logger
 from util import *
 import requests
+import json
+import yaml
 import time
 import webbrowser
 

@@ -1,6 +1,7 @@
 import global_vars as g
 from util import *
 import paho.mqtt.client as paho
+import os
 import time
 import requests
 
