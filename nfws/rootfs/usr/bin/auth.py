@@ -1,4 +1,4 @@
-from conf import config, config_dir
+import conf as c
 from log import logger
 from util import *
 import requests
@@ -13,7 +13,7 @@ def load_netatmo_token():
     global netatmo_token
     
     try:
-        with open(config_dir+r'netatmo_token.yaml') as file:
+        with open(c.config_dir+r'netatmo_token.yaml') as file:
             netatmo_token = yaml.load(file, Loader=yaml.FullLoader)
     except BaseException as err:
         netatmo_token = {}
@@ -32,19 +32,19 @@ def netatmo_check_oauth_code():
     Check if the Netatmo authorization OAUTH code is missing.
     If missing, display a critical error message with instructions on how to obtain the code.
     """
-    global config
+    #global config
 
     logger.debug('config auth code:')
-    logger.debug(config)
+    logger.debug(c.config)
 
-    client = get_dict_value(config["netatmo"], "oauth_code", "")
+    client = get_dict_value(c.config["netatmo"], "oauth_code", "")
     if client == "":
         logger.critical(f"{snow()}Missing Netatmo authorisation OAUTH code!")
         logger.critical(f"When access granted, copy code value from returned url to config.yaml")
         logger.critical(f"Example of returned URL: https://app.netatmo.net/oauth2/hassio?state=nfws_hass&code=5ebbe91cdd814823ddfe4336a7e9b6b8")
-        client_id = config["netatmo"]["client_id"]
-        uri = config["netatmo"]["redirect_uri"]
-        state = config["netatmo"]["state"]
+        client_id = c.config["netatmo"]["client_id"]
+        uri = c.config["netatmo"]["redirect_uri"]
+        state = c.config["netatmo"]["state"]
         url = f"https://api.netatmo.com/oauth2/authorize?client_id={client_id}&redirect_uri={uri}&scope=read_station&state={state}"
         logger.critical(f"")
         logger.critical(f"Calling...{url}")
@@ -59,10 +59,10 @@ def netatmo_get_oauth_token():
     Get the Netatmo OAuth token based on the provided configuration.
     """
     global netatmo_token    
-    client_id = config["netatmo"]["client_id"]
-    client_secret = config["netatmo"]["client_secret"]
-    uri = config["netatmo"]["redirect_uri"]
-    code = config["netatmo"]["oauth_code"]
+    client_id = c.config["netatmo"]["client_id"]
+    client_secret = c.config["netatmo"]["client_secret"]
+    uri = c.config["netatmo"]["redirect_uri"]
+    code = c.config["netatmo"]["oauth_code"]
     refresh_token = netatmo_token["refresh_token"]
     
     if refresh_token != "":
@@ -107,7 +107,7 @@ def netatmo_get_oauth_token():
         #refresh_token = json_token["refresh_token"]
 
         try:
-            with open(config_dir+r'netatmo_token.yaml', 'w') as file:
+            with open(c.config_dir+r'netatmo_token.yaml', 'w') as file:
                 documents = yaml.dump(json_token, file)
         except BaseException as err:
             logger.critical(f"{snow()}Cannot write netatmo_token.yaml {err=}, {type(err)=}")
@@ -123,11 +123,11 @@ def netatmo_refresh_token():
     global netatmo_token
     
     logger.debug('refresh token:')
-    logger.debug(config)
+    logger.debug(c.config)
 
 
-    client_id = config["netatmo"]["client_id"]
-    client_secret = config["netatmo"]["client_secret"]
+    client_id = c.config["netatmo"]["client_id"]
+    client_secret = c.config["netatmo"]["client_secret"]
     refresh_token = netatmo_token["refresh_token"]
     
     data = f"grant_type=refresh_token&client_id={client_id}&client_secret={client_secret}&refresh_token={refresh_token}"
@@ -168,7 +168,7 @@ def netatmo_refresh_token():
         netatmo_token = response.json()
         
         try:
-            with open(config_dir+r'netatmo_token.yaml', 'w') as file:
+            with open(c.config_dir+r'netatmo_token.yaml', 'w') as file:
                 documents = yaml.dump(json_token, file)
         except BaseException as err:
             print(f"{snow()}Cannot write netatmo_token.yaml {err=}, {type(err)=}")
