@@ -1,5 +1,5 @@
 import re
-import config
+from conf import *
 from log import *
 from datetime import datetime, timezone
 
