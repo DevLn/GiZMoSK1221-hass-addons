@@ -70,6 +70,9 @@ def netatmo_get_oauth_token():
         data = f"grant_type=authorization_code&client_id={client_id}&client_secret={client_secret}&code={code}&redirect_uri={uri}&scope=read_station"
         method = "Netatmo authorization_code"
 
+    logger.debug(method)
+    logger.debug(data)
+
     #logger.debug(data)
     headers = {'Content-Type': 'application/x-www-form-urlencoded',}
     response_ok = False
