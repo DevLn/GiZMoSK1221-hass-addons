@@ -31,7 +31,8 @@ def netatmo_check_oauth_code():
     If missing, display a critical error message with instructions on how to obtain the code.
     """
     global config
-    
+
+    logger.debug('config auth code:')
     logger.debug(config)
 
     client = get_dict_value(config["netatmo"], "oauth_code", "")
@@ -117,7 +118,12 @@ def netatmo_refresh_token():
     """
     Refresh the Netatmo OAuth token based on the provided configuration.
     """
-    global netatmo_token    
+    global netatmo_token
+    
+    logger.debug('refresh token:')
+    logger.debug(config)
+
+
     client_id = config["netatmo"]["client_id"]
     client_secret = config["netatmo"]["client_secret"]
     refresh_token = netatmo_token["refresh_token"]

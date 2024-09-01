@@ -4,7 +4,7 @@ import shutil
 import yaml
 from util import *
 
-config = None
+global config
 config_dir = ""
 run_mode = ""  #local, hass
 
@@ -69,6 +69,7 @@ def load_config():
             logger.critical(f"{snow()}options.yaml missing {err=}, {type(err)=}")
             exit()
     
+    logger.debug('config loaded:')
     logger.debug(config)
     #exit()
 
@@ -110,6 +111,7 @@ def load_config():
     if "state" not in config["netatmo"]:
         (config["netatmo"])["state"] = "nfws_hass"
 
+    logger.debug('config updated:')
     logger.debug(config)
 
     netatmo_stations = config["netatmo_stations"]
