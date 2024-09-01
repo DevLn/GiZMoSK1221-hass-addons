@@ -24,11 +24,11 @@ def hass_register_sensor(entity_name, sensor, station):
         bool: True if the sensor is successfully registered, False otherwise.
     """
     global registered_entity
-    
+
     if entity_name in registered_entity:
         return False
-    
-    registered_entity[entity_name] = True 
+
+    registered_entity[entity_name] = True
     hass_conf = {}
     hass_conf["unique_id"] = entity_name
     hass_conf["name"] = entity_name
@@ -36,20 +36,20 @@ def hass_register_sensor(entity_name, sensor, station):
     hass_conf["json_attributes_topic"] = "nfws/sensor/" + entity_name + "/state" #new
     hass_conf["value_template"] = "{{ value_json.value }}" #new
     # hass_conf["device"] = {
-    #     "identifiers": ["Netatmo weather station_70ee50"], 
-    #     "name": "Netatmo Favourite Weather Stations", 
-    #     "manufacturer": "Netatmo", 
-    #     "model": "Weather Stations" 
+    #     "identifiers": ["Netatmo weather station_70ee50"],
+    #     "name": "Netatmo Favourite Weather Stations",
+    #     "manufacturer": "Netatmo",
+    #     "model": "Weather Stations"
     # }
     # set different device for each station
     hass_conf["device"] = {
-        "identifiers": ["nfws_" + station], 
-        "name": station, 
-        "manufacturer": "Netatmo", 
-        "model": "Weather Stations" 
+        "identifiers": ["nfws_" + station],
+        "name": station,
+        "manufacturer": "Netatmo",
+        "model": "Weather Stations"
     }
 
-                
+
     sensor_lower = sensor.lower()
     if "compass" in sensor_lower:
         hass_conf["device_class"] = "enum"
@@ -60,7 +60,7 @@ def hass_register_sensor(entity_name, sensor, station):
             hass_conf["friendly_name"] = "Wind (Max) Direction"
         elif sensor_lower[:4] == "gust":
             hass_conf["friendly_name"] = "Gust Direction"
-            
+
         if sensor_lower[-6:] == "symbol":
             hass_conf["friendly_name"] += " (↕)"
     else:
@@ -113,14 +113,14 @@ def hass_register_sensor(entity_name, sensor, station):
                 hass_conf["friendly_name"] = "Wind (Max) Angle"
             elif sensor_lower == "gustangle":
                 hass_conf["friendly_name"] = "Gust Angle"
-                
+
     if "friendly_name" in hass_conf:
         hass_conf["name"] = hass_conf["friendly_name"]
     else:
         logger.debug( snow() + "Friendly name missing: " + str(hass_conf["name"]))
 
     logger.info( snow() + "Registering: " + str(hass_conf))
-    ret = hass_mqtt_publish("homeassistant/sensor/nfws/" + entity_name + "/config", json.dumps(hass_conf), qos=0, retain=True) 
+    ret = hass_mqtt_publish("homeassistant/sensor/nfws/" + entity_name + "/config", json.dumps(hass_conf), qos=0, retain=True)
     #print(ret.rc)
 
     return True
@@ -137,19 +137,19 @@ def hass_publish_station_sensor(station, sensor, value):
     Returns:
         bool: True if the sensor data is successfully published, False otherwise.
     """
-    if sensor in station["sensors"]:        
+    if sensor in station["sensors"]:
         # Check if the sensor is configured for the station
         hass_register_sensor("nfws_" + station["name"] + "_" + sensor, sensor, station["name"])
 
         hass_data = {}
         hass_data["value"] = value
         hass_data["updated_when"] = snow()
-        
+
         if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_data["Compass"] = degToCompass(value)
             hass_data["CompassSymbol"] = degToCompassSymbol(value)
 
-        ret = hass_mqtt_publish(f"nfws/sensor/nfws_{station['name']}_{sensor}/state", json.dumps(hass_data, ensure_ascii=False), qos = 0, retain = False) 
+        ret = hass_mqtt_publish(f"nfws/sensor/nfws_{station['name']}_{sensor}/state", json.dumps(hass_data, ensure_ascii=False), qos = 0, retain = False)
         #print(ret.rc)
     return True
 
@@ -167,9 +167,9 @@ def hass_publish_calculated_station_sensor(entity_name, sensor, value, station):
         bool: True if the sensor data is successfully published, False otherwise.
     """
     hass_register_sensor(entity_name, sensor, station)
-    
+
     value["updated_when"] = snow()
-    ret = hass_mqtt_publish(f"nfws/sensor/{entity_name}/state", json.dumps(value, ensure_ascii=False), qos = 0, retain = False) 
+    ret = hass_mqtt_publish(f"nfws/sensor/{entity_name}/state", json.dumps(value, ensure_ascii=False), qos = 0, retain = False)
     #print(ret.rc)
 
     return True
@@ -198,7 +198,7 @@ def netatmo_getdata():
             #print(json.dumps(json_netatmo, indent = 4, sort_keys=True))
             logger.debug(json_netatmo)
             time.sleep(60)
-            
+
         if "error" in json_netatmo:
             if json_netatmo["error"]["message"] in {"Invalid access token", "Access token expired"}:
                 logger.warning(snow() + "Invalid access token or expired:" + json_netatmo["error"]["message"])
@@ -323,7 +323,7 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
                 value = max(values)
             elif function_sensor["function"] == "avg":
                 value = avg(values)
-        
+
         #print(value)
         suffix = ""
         if get_dict_value(function_sensor, "suffix", "") != "":
@@ -331,13 +331,13 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
         hass_sensor = f"nfws_{function_sensor['function']}_{sensor}{suffix}"
         hass_sensor_value = {}
         hass_sensor_value["value"] = value
-        
+
         if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_sensor_value["Compass"] = degToCompass(value)
             hass_sensor_value["CompassSymbol"] = degToCompassSymbol(value)
 
         hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
-        
+
         if "angle" in sensor.lower() and "compass" not in sensor.lower():
             hass_sensor = f"nfws_{function_sensor['function']}_{sensor}Compass{suffix}"
             hass_sensor_value = {}
@@ -350,15 +350,15 @@ def netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor):
             hass_publish_calculated_station_sensor(hass_sensor, sensor, hass_sensor_value, function_sensor["function"] + suffix)
 
         #print(f"{hass_sensor}: {value}")
-        
+
 
 def netatmo_handle_calculated_sensors_function_first(function_sensor):
     """
         Handle the calculated sensors based on the minimum, maximum, or average values.
-        
+
         Args:
             function_sensor (dict): The configuration for the calculated sensor.
-    """    
+    """
     if "sensors" not in function_sensor:
         return
     if "stations" not in function_sensor:
@@ -384,30 +384,30 @@ def netatmo_handle_calculated_sensors_function_first(function_sensor):
             if timestampdelta>=60*int(get_dict_value(function_sensor, "timeDelta", "30")):
                 debug_log(f"{station_name}: last update too long")
                 break
-            
+
             found = True
             dashboard_data = match.context.value
             #print(dashboard_data)
-            
+
             if first_sensor.lower()[:4] in {"wind", "gust"}:
                 dashboard_data["WindAngleCompass"] = degToCompass(dashboard_data["WindAngle"])
                 dashboard_data["WindAngleCompassSymbol"] = degToCompassSymbol(dashboard_data["WindAngle"])
                 dashboard_data["GustAngleCompass"] = degToCompass(dashboard_data["GustAngle"])
                 dashboard_data["GustAngleCompassSymbol"] = degToCompassSymbol(dashboard_data["GustAngle"])
-            
+
             suffix = ""
             if get_dict_value(function_sensor, "suffix", "") != "":
                 suffix = f"_function_sensor['suffix']"
             hass_sensor = f"nfws_{function_sensor['function']}_station_name{suffix}"
             #station_name = f"{match.context.context.context.context.value['station_name']} in {match.context.context.context.context.value['place']['city']}"
-            
+
             for sensor in function_sensor["sensors"]:
                 hass_sensor = f"nfws_{function_sensor['function']}_{sensor}{suffix}"
                 if sensor in dashboard_data:
                     hass_sensor_value = {}
                     hass_sensor_value["value"] = f"{dashboard_data[sensor]}"
                     hass_sensor_value["station_name"] = station_name
-                    
+
                     if "angle" in sensor.lower() and "compass" not in sensor.lower():
                         hass_sensor_value["Compass"] = degToCompass(dashboard_data[sensor])
                         hass_sensor_value["CompassSymbol"] = degToCompassSymbol(dashboard_data[sensor])
@@ -425,10 +425,47 @@ def netatmo_handle_calculated_sensors():
     """
     if "calculated_sensors" not in config:
         return
-        
+
     for function_sensor in config["calculated_sensors"]:
         if function_sensor["function"] == "first":
             netatmo_handle_calculated_sensors_function_first(function_sensor)
         if function_sensor["function"] in {"min", "max", "avg"}:
             netatmo_handle_calculated_sensors_function_minmaxavg(function_sensor)
 
+def hass_register_sensor_test():
+    """
+    Registers a sensor in Home Assistant.
+
+    Args:
+        entity_name (str): The name of the entity.
+        sensor (str): The name of the sensor.
+        station (str): The name of the station.
+
+    Returns:
+        bool: True if the sensor is successfully registered, False otherwise.
+    """
+
+    hass_conf = {}
+    hass_conf["unique_id"] = 'nfws_test'
+    hass_conf["name"] = 'nfws_test'
+    hass_conf["state_topic"] = "nfws/sensor/nfws_test/state"
+    hass_conf["json_attributes_topic"] = "nfws/sensor/nfws_test/state" #new
+    hass_conf["value_template"] = "{{ value_json.value }}" #new
+    # hass_conf["device"] = {
+    #     "identifiers": ["Netatmo weather station_70ee50"],
+    #     "name": "Netatmo Favourite Weather Stations",
+    #     "manufacturer": "Netatmo",
+    #     "model": "Weather Stations"
+    # }
+    # set different device for each station
+    hass_conf["device"] = {
+        "identifiers": ["nfws_test"],
+        "name": "nfws_test",
+        "manufacturer": "Netatmo",
+        "model": "Weather Stations"
+    }
+
+    ret = hass_mqtt_publish("homeassistant/sensor/nfws/nfws_test/config", json.dumps(hass_conf), qos=0, retain=True)
+    #print(ret.rc)
+
+    return True
