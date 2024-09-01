@@ -4,7 +4,7 @@ import shutil
 import yaml
 from util import *
 
-global config
+config = {}
 config_dir = ""
 run_mode = ""  #local, hass
 
