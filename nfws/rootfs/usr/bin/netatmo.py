@@ -186,7 +186,7 @@ def netatmo_getdata():
         access_token = g.netatmo_token["access_token"]
         headers = {'Authorization': f"Bearer {access_token}", }
         try:
-            response = requests.get('https://api.netatmo.com/api/getstationsdata', params=params, headers=headers)
+            response = requests.get('https://api.netatmo.com/api/getstationsdata', params=g.params, headers=headers)
         except BaseException as err:
             logger.warning(f"{snow()}Unexpected netatmo_getdata {err=}, {type(err)=}")
             logger.warning("  Retry in 1 min again")
