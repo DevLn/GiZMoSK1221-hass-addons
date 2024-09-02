@@ -185,6 +185,7 @@ def netatmo_getdata():
     while not response_ok:
         access_token = g.netatmo_token["access_token"]
         headers = {'Authorization': f"Bearer {access_token}", }
+        logger.debug(f"Netatmo getstationsdata {g.params}, headers: {headers}")
         try:
             response = requests.get('https://api.netatmo.com/api/getstationsdata', params=g.params, headers=headers)
         except BaseException as err:
