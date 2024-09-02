@@ -194,7 +194,7 @@ def netatmo_getdata():
             continue
         json_netatmo = response.json()
         #print(json_netatmo)
-        if get_dict_value(config["netatmo"], "show_response", False) == True:
+        if get_dict_value(g.config["netatmo"], "show_response", False) == True:
             #print(json.dumps(json_netatmo, indent = 4, sort_keys=True))
             logger.debug(json_netatmo)
             time.sleep(60)
