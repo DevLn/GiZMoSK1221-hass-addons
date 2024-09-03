@@ -98,7 +98,7 @@ def load_config():
         exit()
     
     if "redirect_uri" not in g.config["netatmo"]:
-        (g.config["netatmo"])["redirect_uri"] = "hassio"
+        (g.config["netatmo"])["redirect_uri"] = "http://localhost" #"hassio"
     if "state" not in g.config["netatmo"]:
         (g.config["netatmo"])["state"] = "nfws_hass"
 

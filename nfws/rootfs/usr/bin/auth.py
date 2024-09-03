@@ -32,10 +32,6 @@ def netatmo_check_oauth_code():
     Check if the Netatmo authorization OAUTH code is missing.
     If missing, display a critical error message with instructions on how to obtain the code.
     """
-    #global config
-
-    logger.debug('config auth code:')
-    logger.debug(g.config)
 
     client = get_dict_value(g.config["netatmo"], "oauth_code", "")
     if client == "":
@@ -123,10 +119,6 @@ def netatmo_refresh_token():
     """
     Refresh the Netatmo OAuth token based on the provided configuration.
     """
-    
-    logger.debug('refresh token:')
-    logger.debug(g.config)
-
 
     client_id = g.config["netatmo"]["client_id"]
     client_secret = g.config["netatmo"]["client_secret"]
@@ -136,6 +128,10 @@ def netatmo_refresh_token():
     print(data)
     headers = {'Content-Type': 'application/x-www-form-urlencoded',}
     response_ok = False
+    
+    logger.debug('netatmo_refresh_token:')
+    logger.debug(data)
+
 
     while not response_ok:
         try:
